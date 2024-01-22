@@ -1,0 +1,5 @@
+-r base.txt
+ruff==0.1.8
+Faker==22.0.0
+pytest-django==4.7.0
+pytest-cov==4.1.0

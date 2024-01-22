@@ -1,0 +1,8 @@
+django-extensions==3.2.3
+django-ninja-jwt==5.2.10
+django-ninja==1.1.0
+Django==5.0
+psycopg2-binary==2.9.9
+pydantic==2.5.3
+python-decouple==3.8
+whitenoise==6.6.0
