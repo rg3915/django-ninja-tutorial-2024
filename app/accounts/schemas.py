@@ -1,8 +1,6 @@
 from django.contrib.auth import get_user_model
-from ninja import Schema
+from ninja import Schema, Field
 from ninja.orm import create_schema
-
-# from typing import Dict, List
 
 
 UsernameSchemaMixin = create_schema(get_user_model(), fields=[get_user_model().USERNAME_FIELD])
@@ -21,9 +19,11 @@ class RequestPasswordResetSchema(EmailSchemaMixin):
 
 
 class SetPasswordSchema(UsernameSchemaMixin):
-    new_password1: str  # Não precisa
-    new_password2: str  # Não precisa
+    new_password1: str = Field(..., min_length=8)
+    new_password2: str = Field(..., min_length=8)
     token: str
+
+    # https://docs.pydantic.dev/latest/api/functional_validators/#pydantic.functional_validators.model_validator
 
 
 class ChangePasswordSchema(Schema):
