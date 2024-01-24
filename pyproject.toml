@@ -1,0 +1,4 @@
+[tool.taskipy.tasks]
+test = { cmd = "pytest -vv --cov=app", help = "runs all tests" }
+post_test = { cmd = "coverage html", help = "generate html coverage" }
+lint = { cmd = "pylint tests taskipy", help = "confirms code style using pylint" }
