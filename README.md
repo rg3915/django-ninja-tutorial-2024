@@ -32,3 +32,15 @@ python manage.py createsuperuser --username="admin" --email=""
 
 pytest -vv
 ```
+
+### httpie
+
+```
+http post http://localhost:8000/api/v1/users/request_reset_password email=regis@email.com
+
+http post http://localhost:8000/api/v1/users/reset_password \
+username=regis \
+new_password1=demodemo \
+new_password2=demodemo \
+token=c1adg7...
+```
