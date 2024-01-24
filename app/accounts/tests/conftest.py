@@ -4,7 +4,8 @@ import pytest
 @pytest.fixture
 def user_data():
     return {
-        'username': 'Lorem',
+        'username': 'lorem',
+        'email': 'test@example.com',
         'password': 'strong-test-pass',
     }
 
