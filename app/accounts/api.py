@@ -53,22 +53,22 @@ def request_reset_password(request, data: RequestPasswordResetSchema):
     """
     Use este endpoint para enviar e-mail ao usuário com link para reset de senha.
     """
-    form = PasswordResetForm(data.dict())
-    if form.is_valid():
-        form.save(
-            request=request,
-            extra_email_context=(
-                {'frontend_url': settings.FRONTEND_URL} if hasattr(settings, 'FRONTEND_URL') else None
-            ),
-        )
+    # Gerar token e enviar email
+    # Pega o usuario
+    user = get_user_model().objects.filter(email=data.email).first()
+    print('user')
+    print(user)
+    # Gerar token e enviar por e-mail.
+    token = default_token_generator.make_token(user)
+    # TODO enviar e-mail.
+    print(token)
     return HTTPStatus.NO_CONTENT, None
 
 
 @router.post(
     'users/reset_password',
     response={
-        HTTPStatus.OK: UserOutSchema,
-        HTTPStatus.FORBIDDEN: ErrorsOutSchema,
+        HTTPStatus.NO_CONTENT: None,
         HTTPStatus.UNPROCESSABLE_ENTITY: None,
     },
     auth=None,
@@ -89,28 +89,22 @@ def reset_password(request, data: SetPasswordSchema):
     if user.exists():
         user = user.get()
         if default_token_generator.check_token(user, data.token):
-            form = SetPasswordForm(user, data.dict())
-            if form.is_valid():
-                form.save()
-                django_login(request, user, backend=_LOGIN_BACKEND)
-                return user
-            return HTTPStatus.FORBIDDEN, {'errors': dict(form.errors)}
+            # TODO comparar uma senha com a outra
+            user.password = data.new_password1
+            user.save()
+            return HTTPStatus.NO_CONTENT, None
+
     return HTTPStatus.UNPROCESSABLE_ENTITY, None
 
 
-@router.post(
-    'users/change_password',
-    response={HTTPStatus.OK: None, HTTPStatus.FORBIDDEN: ErrorsOutSchema},
-    auth=django_auth,
-    tags=['Users'],
-)
+@router.post('users/change_password', response={HTTPStatus.OK: None}, auth=django_auth, tags=['Users'])
 def change_password(request, data: ChangePasswordSchema):
     """
     Use este endpoint para redefinir a senha.
     """
-    form = PasswordChangeForm(request.user, data.dict())
-    if form.is_valid():
-        form.save()
-        update_session_auth_hash(request, request.user)
-        return HTTPStatus.OK
-    return HTTPStatus.FORBIDDEN, {'errors': dict(form.errors)}
+    user = request.user
+    # TODO comparar uma senha com a outra
+    user.password = data.new_password1
+    user.save()
+    update_session_auth_hash(request, user)
+    return HTTPStatus.OK
